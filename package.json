@@ -1,0 +1,57 @@
+{
+  "name": "avel-browser",
+  "version": "0.1.0",
+  "description": "Avel Browser — navigateur souverain européen avec assistant IA Mistral intégré (MVP)",
+  "main": "main.js",
+  "author": "ampynjord",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "test": "node --test",
+    "node-server": "node core/drive/server.js",
+    "mesh-server": "node core/network/server.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "eu.avel.browser",
+    "productName": "Avel Browser",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "config.json",
+      "core/**/*",
+      "ui/**/*",
+      "vendor/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Network"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "imapflow": "^1.4.2",
+    "mailparser": "^3.9.11",
+    "nodemailer": "^9.0.1",
+    "openpgp": "^6.3.1"
+  }
+}

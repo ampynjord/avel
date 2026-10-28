@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+
+# Secrets — ne JAMAIS committer une vraie clé API.
+# La clé MISTRAL_API_KEY se renseigne dans .env (voir .env.example).
+.env
+avel-secrets.enc

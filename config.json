@@ -1,0 +1,36 @@
+{
+  "app": {
+    "name": "Avel Browser",
+    "homepage": "index.html",
+    "defaultSearchEngine": "https://duckduckgo.com/?q="
+  },
+  "ai": {
+    "provider": "mistral",
+    "model": "mistral-small-latest",
+    "availableModels": ["mistral-small-latest", "mistral-large-latest"],
+    "endpoint": "https://api.mistral.ai/v1/chat/completions",
+    "requestTimeoutMs": 10000,
+    "maxPageContextChars": 6000,
+    "systemPrompt": "Tu es Avel Assistant, un assistant IA souverain européen. Réponds de façon claire, concise et utile, en respectant la vie privée de l'utilisateur."
+  },
+  "security": {
+    "blockTrackers": true,
+    "blockThirdPartyCookies": true,
+    "doNotTrack": true,
+    "trackerBlocklist": [
+      "doubleclick.net",
+      "google-analytics.com",
+      "googletagmanager.com",
+      "facebook.net",
+      "connect.facebook.net",
+      "scorecardresearch.com",
+      "adservice.google.com",
+      "ads.yahoo.com",
+      "analytics.tiktok.com"
+    ]
+  },
+  "privacy": {
+    "telemetry": false,
+    "clearHistoryOnExit": false
+  }
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'" />
+  <title>Avel Browser</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Parseur Markdown léger, vendorisé en local (souveraineté + CSP 'self', hors-ligne). -->
+  <script src="vendor/marked.min.js"></script>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Barre d'onglets -->
+    <div class="tabbar">
+      <div class="tabs" id="tabs"></div>
+      <button id="btn-new-tab" title="Nouvel onglet">+</button>
+    </div>
+
+    <!-- Barre de navigation -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div class="name">Avel<span>Browser</span></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button id="btn-back" title="Précédent">‹</button>
+        <button id="btn-forward" title="Suivant">›</button>
+        <button id="btn-reload" title="Recharger">⟳</button>
+        <button id="btn-home" title="Accueil">⌂</button>
+      </div>
+
+      <div class="urlbar">
+        <input id="url-input" type="text"
+               placeholder="Rechercher ou saisir une adresse…"
+               autocomplete="off" spellcheck="false" />
+        <button id="btn-star" class="icon-btn" title="Ajouter aux favoris">☆</button>
+      </div>
+
+      <button class="icon-btn" id="btn-mail" title="Avel Mail">✉</button>
+      <button class="icon-btn" id="btn-drive" title="Avel Drive">☁</button>
+      <button class="icon-btn" id="btn-studio" title="Avel Studio">📝</button>
+      <button class="icon-btn" id="btn-downloads" title="Téléchargements">⭳</button>
+      <button class="icon-btn assistant-toggle" id="btn-toggle-assistant" title="Assistant Avel">✦</button>
+    </header>
+
+    <!-- Barre de favoris (masquable via Ctrl+Shift+B) -->
+    <div class="bookmarks-bar" id="bookmarks-bar"></div>
+
+    <!-- Corps : zone de navigation + assistant -->
+    <main class="body">
+      <!-- Barre de chargement linéaire 2px, juste sous la toolbar -->
+      <div class="loading-bar" id="loading-bar"></div>
+
+      <section class="viewport" id="viewport">
+        <!-- Page d'accueil locale -->
+        <div class="home" id="home-screen">
+          <div class="home-inner">
+            <div class="hero-logo">A</div>
+            <h1>Avel<span>Browser</span></h1>
+            <p>Le navigateur souverain européen. Épuré, privé, et propulsé par
+               un assistant IA Mistral intégré.</p>
+            <div class="quick">
+              <a href="https://duckduckgo.com" data-url="https://duckduckgo.com">DuckDuckGo</a>
+              <a href="https://mistral.ai" data-url="https://mistral.ai">Mistral AI</a>
+              <a href="https://europa.eu" data-url="https://europa.eu">Europa.eu</a>
+              <a href="https://wikipedia.org" data-url="https://wikipedia.org">Wikipédia</a>
+            </div>
+
+            <div class="home-section">
+              <div class="home-label">Favoris</div>
+              <div class="home-bookmarks" id="home-bookmarks"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Les <webview> sont créées dynamiquement par onglet (renderer.js). -->
+
+        <!-- Avel Mail (vue interne plein écran, masquée par défaut) -->
+        <div class="mail-view" id="mail-view"></div>
+
+        <!-- Avel Drive (vue interne plein écran, masquée par défaut) -->
+        <div class="mail-view" id="drive-view"></div>
+
+        <!-- Avel Studio (vue interne plein écran, masquée par défaut) -->
+        <div class="mail-view" id="studio-view"></div>
+      </section>
+
+      <!-- Panneau Avel Assistant -->
+      <aside class="assistant collapsed" id="assistant-panel">
+        <div class="assistant-header">
+          <span class="dot"></span>
+          <div class="assistant-title">
+            <h2>Avel Assistant</h2>
+            <small id="assistant-status">IA souveraine · Mistral AI</small>
+          </div>
+          <button id="btn-clear-data" title="Effacer le cache et les cookies">🧽</button>
+          <button id="btn-clear-web-history" title="Effacer l'historique de navigation">🧹</button>
+          <button id="btn-clear-history" title="Effacer la conversation">🗑</button>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <div class="composer-tools">
+          <button id="btn-analyze" title="Résumer la page web affichée">✦ Analyser la page</button>
+        </div>
+
+        <div class="composer">
+          <textarea id="chat-input" placeholder="Écrivez votre message…"></textarea>
+          <button id="chat-send" title="Envoyer">➤</button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Menu contextuel custom (clic droit page web) -->
+    <div class="context-menu" id="context-menu"></div>
+
+    <!-- Modale JS interne (alert / confirm / prompt) -->
+    <div class="dialog-overlay" id="dialog-overlay">
+      <div class="dialog">
+        <div class="dialog-message" id="dialog-message"></div>
+        <div class="dialog-input-wrap" id="dialog-input-wrap">
+          <input class="dialog-input" id="dialog-input" type="text" spellcheck="false" />
+        </div>
+        <div class="dialog-actions">
+          <button class="dialog-btn" id="dialog-cancel">Annuler</button>
+          <button class="dialog-btn primary" id="dialog-ok">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panneau des téléchargements -->
+    <div class="downloads-panel" id="downloads-panel">
+      <div class="downloads-head">
+        <span>Téléchargements</span>
+        <button id="dl-clear" title="Effacer la liste">Effacer</button>
+      </div>
+      <div class="downloads-list" id="downloads-list"></div>
+    </div>
+
+  </div>
+
+  <script type="module" src="ui/main.js"></script>
+</body>
+</html>
